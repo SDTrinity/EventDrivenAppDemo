@@ -44,7 +44,7 @@ void InsertData(IHost app)
     using (var scope = scopedFactory.CreateScope())
     {
         var service = scope.ServiceProvider.GetService<DataWriter>();
-        service.Seed();
+        service.Write();
     }
 }
 
