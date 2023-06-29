@@ -6,6 +6,7 @@ namespace EventDrivenAppDemo.Core.Models
 {
     public class SensorData
     {
+        public string SensorDataId { get; set; }
         public string Gate { get; set; }
         public DateTime TimeStamp { get; set; }
         public int NumberOfPeople { get; set; }
