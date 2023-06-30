@@ -6,36 +6,28 @@ namespace EventDrivenAppDemo.Core.Models
     public class DataWriter
     {
         private readonly SensorDataDbContext SensorDataDbContext;
-
+        static readonly object _object = new object();
         public DataWriter(SensorDataDbContext SensorDataDbContext)
         {
             this.SensorDataDbContext = SensorDataDbContext;
         }
 
-        public void Write()
+        public void Write(List<SensorData> SensorDatas)
         {
-            if(!SensorDataDbContext.SensorData.Any())
+            try
             {
-                var SensorDatas = new List<SensorData>()
-                {
-                        new SensorData()
-                        {
-                            Gate = "1",
-                            TimeStamp = DateTime.UtcNow,
-                            NumberOfPeople = 10,
-                            Type = "leave"
-                        },
-                        new SensorData()
-                        {
-                           Gate = "2",
-                            TimeStamp = DateTime.UtcNow,
-                            NumberOfPeople = 10,
-                            Type = "entry"
-                        }
-                };
-
+                Monitor.Enter(_object);
                 SensorDataDbContext.SensorData.AddRange(SensorDatas);
                 SensorDataDbContext.SaveChanges();
+
+            }
+            catch(Exception ex)
+            {
+                //TODO
+            }
+            finally
+            {
+                Monitor.Exit(_object);
             }
         }
     }

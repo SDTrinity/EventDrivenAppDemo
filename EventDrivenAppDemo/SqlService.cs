@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppDb");
+
 builder.Services.AddTransient<DataWriter>();
 //Add Repository Pattern
 builder.Services.AddScoped<IDataRepository, DataRepository>();
@@ -13,7 +15,7 @@ builder.Services.AddDbContext<SensorDataDbContext>(x => x.UseSqlServer(connectio
 var app = builder.Build();
 
 app.MapGet("/", () => "Sql Service!");
-
+var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
 var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
@@ -31,20 +33,26 @@ consumer.Received += (model, ea) =>
 {
     byte[] body = ea.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
-    Console.WriteLine($" [x] {message}");
+    SensorData? sensorData = JsonSerializer.Deserialize<SensorData>(message);
+    if(sensorData!=null)
+    {
+        sensorData.SensorDataId = Guid.NewGuid().ToString();
+        var sensorDatas = new List<SensorData>();
+        sensorDatas.Add(sensorData);
+        InsertData(scopedFactory, sensorDatas);
+    }
+
 };
 channel.BasicConsume(queue: queueName,
                      autoAck: true,
                      consumer: consumer);
 
-void InsertData(IHost app)
+void InsertData(IServiceScopeFactory scopedFactory, List<SensorData> sensorDatas)
 {
-    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
-
     using (var scope = scopedFactory.CreateScope())
     {
         var service = scope.ServiceProvider.GetService<DataWriter>();
-        service.Write();
+        service.Write(sensorDatas);
     }
 }
 

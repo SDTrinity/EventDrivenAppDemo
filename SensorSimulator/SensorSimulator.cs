@@ -24,7 +24,7 @@ while (true)
                          body: body);
     Console.WriteLine($"Sent {message}");
     entryType = !entryType;
-    Thread.Sleep(5000);
+    Thread.Sleep(10000);
 }
 
 static string GetMessage(bool entryType)
