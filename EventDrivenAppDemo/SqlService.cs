@@ -4,6 +4,8 @@ using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppDb");
@@ -56,4 +58,29 @@ void InsertData(IServiceScopeFactory scopedFactory, List<SensorData> sensorDatas
     }
 }
 
+
+app.MapPost("/Sensors", ([FromServices] IDataRepository db) =>
+{
+     return db.GetSensors();
+});
+
+app.MapPost("/Sensor", ([FromServices] IDataRepository db, SensorData sensor) =>
+{
+    sensor.SensorDataId = Guid.NewGuid().ToString();
+    return db.AddSensor(sensor);
+});
+
+app.MapGet("/Sensor/type", ([FromServices] IDataRepository db, string type) =>
+{
+    if (type.Equals("enter") || type.Equals("leave"))
+        return db.GetSensorsByType(type);
+    else
+        return HttpStatusCode.BadRequest;
+});
+
+app.MapGet("/Sensor/from/to", ([FromServices] IDataRepository db, DateTime from, DateTime to) =>
+{
+        return db.GetSensorsByDateRange(from.ToUniversalTime(), to.ToUniversalTime());
+    
+});
 app.Run();

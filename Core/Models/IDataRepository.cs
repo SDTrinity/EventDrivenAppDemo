@@ -4,9 +4,10 @@ namespace EventDrivenAppDemo.Core.Models
 {
     public interface IDataRepository
     {
-        List<SensorData> AddSensorData(SensorData SensorData);
-        List<SensorData> GetSensorDatas();
-        SensorData PutSensorData(SensorData SensorData);
-        SensorData GetSensorDataById(string id);
+        List<SensorData> AddSensor(SensorData SensorData);
+        dynamic GetSensors();
+        dynamic GetSensorsByType(string type);
+
+        dynamic GetSensorsByDateRange(DateTime from, DateTime to);
     }
 }
