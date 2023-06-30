@@ -59,7 +59,7 @@ void InsertData(IServiceScopeFactory scopedFactory, List<SensorData> sensorDatas
 }
 
 
-app.MapPost("/Sensors", ([FromServices] IDataRepository db) =>
+app.MapPost("/Sensor/list", ([FromServices] IDataRepository db) =>
 {
      return db.GetSensors();
 });
