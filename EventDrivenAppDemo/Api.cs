@@ -80,7 +80,7 @@ app.MapGet("/Sensor/type", ([FromServices] IDataRepository db, string type) =>
 
 app.MapGet("/Sensor/from/to", ([FromServices] IDataRepository db, DateTime from, DateTime to) =>
 {
-        return db.GetSensorsByDateRange(from.ToUniversalTime(), to.ToUniversalTime());
+        return db.GetSensorsByDateRange(from, to);
     
 });
 app.Run();

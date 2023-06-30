@@ -36,7 +36,7 @@ namespace EventDrivenAppDemo.Core.Models
         public dynamic GetSensorsByDateRange(DateTime fromTimeStamp, DateTime toTimeStamp)
         {
             return db.SensorData.Where(x => x.TimeStamp >= fromTimeStamp && x.TimeStamp <= toTimeStamp)
-                .ToList().Select(x => new { x.Gate, x.Type, x.NumberOfPeople });
+                .ToList();
         }
 
     }
