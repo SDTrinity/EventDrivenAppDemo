@@ -6,9 +6,9 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-Console.WriteLine("[*]              GREEN STADIUM REAL TIME DASHBOARD               [*]");
-Console.WriteLine("[*]                                                              [*]");
-Console.WriteLine("[*]                                                              [*]");
+Console.WriteLine("[*]              GREEN STADIUM REAL TIME (Async consumer) DASHBOARD               [*]");
+Console.WriteLine("[*]                                                                               [*]");
+Console.WriteLine("[*]                                                                               [*]");
 channel.ExchangeDeclare(exchange: "SensorDataExchange", type: ExchangeType.Fanout);
 
 // declare a server-named queue
