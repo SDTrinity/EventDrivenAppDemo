@@ -14,6 +14,7 @@ using var channel = connection.CreateModel();
 channel.ExchangeDeclare(exchange: "SensorDataExchange", type: ExchangeType.Fanout);
 
 bool entryType = true;
+Thread.Sleep(5000);
 while (true)
 {
     var message = GetMessage(entryType);
@@ -24,7 +25,7 @@ while (true)
                          body: body);
     Console.WriteLine($"Sent {message}");
     entryType = !entryType;
-    Thread.Sleep(10000);
+    Thread.Sleep(5000);
 }
 
 static string GetMessage(bool entryType)
