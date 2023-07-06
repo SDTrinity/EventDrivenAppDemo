@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-var factory = new ConnectionFactory { HostName = "localhost" };
+var factory = new ConnectionFactory { HostName = "localhost" , DispatchConsumersAsync = true};
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
@@ -17,12 +17,13 @@ channel.QueueBind(queue: queueName,
                   exchange: "SensorDataExchange",
                   routingKey: string.Empty);
 
-var consumer = new EventingBasicConsumer(channel);
-consumer.Received += (model, ea) =>
+var consumer = new AsyncEventingBasicConsumer(channel);
+consumer.Received += async (model, ea) =>
 {
     byte[] body = ea.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
     Console.WriteLine($" [x] {message}");
+    await Task.Yield();
 };
 channel.BasicConsume(queue: queueName,
                      autoAck: true,

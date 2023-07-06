@@ -35,8 +35,8 @@ namespace SqlService
                               exchange: "SensorDataExchange",
                               routingKey: string.Empty);
 
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += (model, ea) =>
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
             {
                 byte[] body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
@@ -46,6 +46,7 @@ namespace SqlService
                     sensorData.SensorDataId = Guid.NewGuid().ToString();
                     InsertData(app,sensorData);
                 }
+                await Task.Yield();
 
             };
             channel.BasicConsume(queue: queueName,

@@ -21,7 +21,7 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Sql Service!");
 var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
-var factory = new ConnectionFactory { HostName = "localhost" };
+var factory = new ConnectionFactory { HostName = "localhost" , DispatchConsumersAsync = true};
 var connection = factory.CreateConnection();
 var channel = connection.CreateModel();
 AsyncWriter asyncWriter = new AsyncWriter();
